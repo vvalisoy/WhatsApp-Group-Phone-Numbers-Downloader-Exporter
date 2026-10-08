@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome – WA Group Number Exporter</title>
+  <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+<main>
+
+  <header class="hero">
+    <img src="../../icons/icon128.png" alt="" width="64" height="64">
+    <div>
+      <h1>WA Group Number Exporter is installed</h1>
+      <p>Export the phone numbers of any WA Web group you're in to <b>Excel</b>, <b>CSV</b> or a
+        <b>vCard (VCF)</b> contacts file, in under a minute.</p>
+    </div>
+  </header>
+
+  <section class="pin">
+    <span class="badge">First</span>
+    <p><b>Pin the extension</b> so it's one click away: click the puzzle icon
+      <span class="kbd" aria-label="puzzle icon">🧩</span> in Chrome's toolbar, then the pin next to
+      <b>WA Group Number Exporter</b>.</p>
+  </section>
+
+  <h2>Export a group in 4 steps</h2>
+  <ol class="steps">
+    <li>
+      <div class="step-text">
+        <h3>Open WA Web and the group</h3>
+        <p>Go to <b>web.whatsapp.com</b>, sign in, and open the group chat you want to export.</p>
+        <a class="button" href="https://web.whatsapp.com/" target="_blank" rel="noopener">Open WA Web</a>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="mock-chatbar"><span class="avatar g"></span><div><b>Book Club Lisbon</b><small>tap here for group info</small></div><span class="pointer">👆</span></div>
+        <div class="mock-bubbles"><span></span><span class="me"></span><span></span></div>
+      </div>
+    </li>
+
+    <li>
+      <div class="step-text">
+        <h3>Open the full members list</h3>
+        <p>Click the <b>group name</b> at the top → <b>Group info</b> opens. Scroll to <b>Members</b> and click
+          <b>View all</b>. Keep this list open.</p>
+        <p class="note">Small groups have no "View all" button. Use <a href="#full-mode">Full mode</a> instead.</p>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="mock-title">142 members</div>
+        <div class="mock-row"><span class="avatar"></span><div><b>~Ana</b><small>+1 555-0101</small></div></div>
+        <div class="mock-row"><span class="avatar"></span><div><b>+44 7700 900123</b></div></div>
+        <div class="mock-row"><span class="avatar"></span><div><b>~Rui</b><small>+1 555-0102</small></div></div>
+        <div class="mock-link">View all (139 more) <span class="pointer">👆</span></div>
+      </div>
+    </li>
+
+    <li>
+      <div class="step-text">
+        <h3>Click the extension → Start</h3>
+        <p>The list scrolls by itself and the counter goes up. When it reaches the end it stops
+          automatically, or press <b>Stop</b> any time.</p>
+        <p class="note">Keep the WA Web tab visible while it runs. Chrome pauses background tabs.</p>
+      </div>
+      <div class="mock mock-popup" aria-hidden="true">
+        <div class="mp-card">
+          <b>Book Club Lisbon</b>
+          <small><span class="dot"></span>Scrolling… 87 found</small>
+          <div class="mp-stats"><span><b>87</b>members</span><span><b>79</b>with number</span><span><b>8</b>no number</span></div>
+        </div>
+        <div class="mp-buttons"><span class="primary">Start</span><span>Stop</span></div>
+      </div>
+    </li>
+
+    <li>
+      <div class="step-text">
+        <h3>Export to Excel, CSV or VCF</h3>
+        <p><b>Excel</b> and <b>CSV</b> give a spreadsheet with Phone, Name, IsAdmin and Group.
+          <b>VCF</b> gives a contacts file you can import into your phone or Google Contacts.
+          Files go to your Downloads folder.</p>
+      </div>
+      <div class="mock mock-file" aria-hidden="true">
+        <div class="file"><span class="ext xlsx">XLSX</span>Book Club Lisbon_2026-10-01.xlsx</div>
+        <div class="file"><span class="ext csv">CSV</span>Book Club Lisbon_2026-10-01.csv</div>
+        <div class="file"><span class="ext vcf">VCF</span>Book Club Lisbon_2026-10-01.vcf</div>
+      </div>
+    </li>
+  </ol>
+
+  <section id="full-mode" class="callout">
+    <h2>Full mode: get saved contacts' numbers too</h2>
+    <p>In the "View all" list, people saved in your phone appear by name only, so normal mode can't see
+      their numbers. Turn on <b>Full mode</b> in the extension, open the group chat (no "View all" needed)
+      and press <b>Start</b>. It reads the member list WA Web already has loaded and finishes in about a second.</p>
+    <p class="note">Full mode depends on WA Web internals. If it says "Full mode unavailable", use normal mode.</p>
+  </section>
+
+  <section class="callout oss">
+    <h2>Free and open source</h2>
+    <p>No limits, no account and no payments. Every export includes all members, in every format. The source code is
+      public, so anyone can check exactly what the extension does.</p>
+  </section>
+
+  <h2>Using your exported file</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>Excel</h3>
+      <p>Use <b>Export → Excel</b> and open the .xlsx file directly. Numbers keep their leading <code>+</code> and the
+        header row has filters.</p>
+    </div>
+    <div class="card">
+      <h3>Google Sheets</h3>
+      <p>File → <b>Import</b> → Upload → choose the CSV. Untick "Convert text to numbers, dates and formulas"
+        to keep the <code>+</code>.</p>
+    </div>
+    <div class="card">
+      <h3>Google Contacts</h3>
+      <p>contacts.google.com → <b>Import</b> → select the <b>.vcf</b> file. Contacts sync to your Android phone.</p>
+    </div>
+    <div class="card">
+      <h3>iPhone</h3>
+      <p>AirDrop or email the <b>.vcf</b> to yourself and open it on the iPhone → <b>Add All Contacts</b>.
+        Or import at icloud.com/contacts.</p>
+    </div>
+  </div>
+
+  <h2>Troubleshooting</h2>
+  <div class="faq">
+    <details>
+      <summary>"Open the group's View all members list first"</summary>
+      <p>The extension couldn't find the members list. Open Group info → View all, then press Start again.
+        If the group has no "View all" button, turn on Full mode.</p>
+    </details>
+    <details>
+      <summary>Some members have no phone number</summary>
+      <p>In the "View all" list, contacts saved in your phone show only a name. Use Full mode to get those numbers.
+        WA Web also hides some members' numbers for privacy (for example in community announcement groups).
+        No tool can get those numbers.</p>
+    </details>
+    <details>
+      <summary>Some members have no name</summary>
+      <p>That member hasn't set a WA name. They're exported with their number and an empty name. In the VCF
+        their contact name is the phone number.</p>
+    </details>
+    <details>
+      <summary>It stopped early or the count looks too low</summary>
+      <p>Keep the WA Web tab in front and the members list open until it says <b>Done</b>. Then press Start
+        again. Results are de-duplicated.</p>
+    </details>
+    <details>
+      <summary>Nothing works after a WA Web update</summary>
+      <p>Click <b>Diagnose</b> in the extension and attach the report to a GitHub issue. It contains only page structure, with
+        no names or numbers.</p>
+    </details>
+  </div>
+
+  <section class="privacy">
+    <h2>Your data stays on your computer</h2>
+    <ul>
+      <li>Numbers are read from the WA Web page you have open and saved only in your browser.</li>
+      <li>Nothing is uploaded. The extension makes no network requests at all: no servers, no account, no tracking.</li>
+      <li><b>Clear</b> in the extension deletes the collected list.</li>
+    </ul>
+    <p class="note">Use exported numbers responsibly. Group members' numbers are personal data, and messaging people
+      who didn't agree to it is spam and may get your own account restricted.</p>
+  </section>
+
+  <footer>
+    WA Group Number Exporter is an independent tool. It is not affiliated with, endorsed or sponsored by
+    WhatsApp LLC or Meta Platforms, Inc. WhatsApp is a trademark of WhatsApp LLC.
+  </footer>
+</main>
+</body>
+</html>

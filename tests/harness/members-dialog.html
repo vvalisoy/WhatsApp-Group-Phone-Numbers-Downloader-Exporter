@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WAX harness</title>
+<!--
+  Simulated WhatsApp "View all" members dialog (virtualized list) for
+  exercising selectors.js + parser.js + scraper.js in a real browser.
+  Serve the project root over http (python3 -m http.server) and open
+  /tests/harness/members-dialog.html?variant=listitem | translateY | plain
+  Result appears in #result and window.__waxResult.
+  Expected: total 249, withPhone 200, hidden 49, admins 14, hasYou false, hasHeader false.
+-->
+<style>
+  body { font: 14px system-ui; margin: 0; }
+  #main header { padding: 10px; background: #eee; }
+  .modal { position: fixed; inset: 40px 30%; background: #fff; border: 1px solid #ccc; display: flex; flex-direction: column; }
+  .scroll { overflow-y: auto; flex: 1; }
+  .row { position: absolute; left: 0; right: 0; height: 72px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #f0f0f0; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #ccc; }
+  #result { position: fixed; bottom: 0; left: 0; right: 0; background: #111; color: #0f0; white-space: pre; font: 12px monospace; max-height: 30vh; overflow: auto; }
+</style>
+</head>
+<body>
+<div id="main"><header><div><span dir="auto" title="Test Group 🚀">Test Group 🚀</span></div></header></div>
+
+<div role="dialog" class="modal">
+  <div><span title="250 members">250 members</span></div>
+  <div class="scroll" id="scroll"><div id="inner" style="position:relative"></div></div>
+</div>
+<div id="result">running…</div>
+
+<script>
+  const variant = new URLSearchParams(location.search).get('variant') || 'listitem';
+  const ROW = 72;
+  const N = 251;
+  const LRE = '‪', PDF = '‬';
+
+  // Real layout (Sep 2026 screenshot): "~PushName" title with the number on a
+  // second line, or just the number when the member has no WhatsApp name.
+  // Every 5th is a saved contact (name only), every 4th has no push name,
+  // every 17th is admin, index 0 is "You", index 120 is a "#" section header.
+  const members = Array.from({ length: N }, (_, i) => {
+    if (i === 0) return { title: 'You' };
+    if (i === 120) return { header: '#' };
+    const num = LRE + `+1 555-${String(1000 + i).padStart(4, '0')}-${String(i % 97).padStart(2, '0')}` + PDF;
+    const base = { about: i % 3 === 0 ? 'System admin at a very large company' : '', admin: i % 17 === 0 };
+    if (i % 5 === 0) return { ...base, title: `Saved Person ${i}` };
+    if (i % 4 === 0) return { ...base, title: num };
+    return { ...base, title: `~Member ${i}${i % 7 === 0 ? ' 😀' : ''}`, secondary: num };
+  });
+
+  const inner = document.getElementById('inner');
+  const scroll = document.getElementById('scroll');
+  inner.style.height = N * ROW + 'px';
+
+  function rowHtml(m, i) {
+    const emoji = (t) => t.replace('😀', '<img alt="😀" src="data:,">');
+    const body = m.header
+      ? `<div><span title="${m.header}">${m.header}</span></div>`
+      : `<div class="avatar"><img src="data:," alt=""></div>
+         <div style="flex:1">
+           <div><span dir="auto" title="${m.title}">${emoji(m.title)}</span></div>
+           ${m.secondary ? `<div style="text-align:right"><span>${m.secondary}</span></div>` : ''}
+           ${m.about ? `<div><span dir="auto" title="${m.about}">${m.about}</span></div>` : ''}
+         </div>
+         ${m.admin ? '<div>Group admin</div>' : ''}`;
+    const role = variant === 'listitem' ? ' role="listitem"' : '';
+    const pos = variant === 'plain' ? `top:${i * ROW}px` : `transform: translateY(${i * ROW}px)`;
+    return `<div class="row"${role} style="${pos}"><div role="button" style="display:flex;gap:8px;width:100%">${body}</div></div>`;
+  }
+
+  // Virtualization: only rows in the viewport (+2 buffer) exist in the DOM,
+  // rendered asynchronously like React does.
+  function renderVisible() {
+    const first = Math.max(0, Math.floor(scroll.scrollTop / ROW) - 2);
+    const last = Math.min(N - 1, Math.ceil((scroll.scrollTop + scroll.clientHeight) / ROW) + 2);
+    let html = '';
+    for (let i = first; i <= last; i++) html += rowHtml(members[i], i);
+    setTimeout(() => { inner.innerHTML = html; }, 50);
+  }
+  scroll.addEventListener('scroll', renderVisible);
+  renderVisible();
+</script>
+<script src="../../src/lib/phone.js"></script>
+<script src="../../src/content/selectors.js"></script>
+<script src="../../src/content/parser.js"></script>
+<script src="../../src/content/scraper.js"></script>
+<script>
+  setTimeout(async () => {
+    const { selectors, parser, scraper } = WAX;
+    const found = new Map();
+    const scope = () => {
+      const d = selectors.findMembersDialog().el;
+      return (selectors.findScrollContainer(d) || { el: d }).el;
+    };
+    const s = scraper.createScraper({
+      getContainer: () => selectors.findScrollContainer(selectors.findMembersDialog().el)?.el ?? null,
+      readRows: () => selectors.findRows(scope()).rows.map(parser.parseRow).filter(Boolean),
+      onBatch: (rs) => rs.forEach((r) => {
+        const k = parser.recordKey(r);
+        found.set(k, found.has(k) ? parser.mergeRecord(found.get(k), r) : r);
+      }),
+      delayMs: 150,
+    });
+    const t0 = performance.now();
+    const status = await s.run();
+    const recs = [...found.values()];
+    const result = {
+      variant,
+      status,
+      rowStrategy: selectors.findRows(scope()).strategy,
+      group: selectors.getGroupName(),
+      total: recs.length,
+      withPhone: recs.filter((r) => r.phone).length,
+      hidden: recs.filter((r) => r.hidden).length,
+      admins: recs.filter((r) => r.isAdmin).length,
+      hasYou: recs.some((r) => r.name === 'You'),
+      hasHeader: recs.some((r) => r.name === '#' || r.name === '250 members'),
+      pushName: recs.find((r) => r.name === 'Member 1'),
+      emoji: recs.find((r) => r.name.startsWith('Member 7 ')),
+      noName: recs.find((r) => r.phone && !r.name),
+      ms: Math.round(performance.now() - t0),
+    };
+    window.__waxResult = result;
+    document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+  }, 300);
+</script>
+</body>
+</html>
